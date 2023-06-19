@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:micasa/app_view.dart';
 import 'package:micasa/helpers/constants.dart';
-import 'package:micasa/helpers/widgets/custom_text.dart';
 import 'package:micasa/helpers/widgets/text_field.dart';
 import 'package:micasa/pages/auth/registration_page.dart';
 
@@ -14,7 +13,18 @@ class LoginPage extends StatelessWidget {
       backgroundColor: kBackgroundColor,
       body: ListView(
         children: [
-          const TcsTopSection(),
+          Padding(
+            padding: const EdgeInsets.only(top: 35.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Image.asset("assets/images/logo.png"),
+                )
+              ],
+            ),
+          ),
           verticalSpace(height: 15),
           const EditFormSection(),
           Padding(
@@ -70,33 +80,6 @@ class LoginPage extends StatelessWidget {
                 decoration: TextDecoration.underline,
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class TcsTopSection extends StatelessWidget {
-  const TcsTopSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: kSecondaryColor,
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CustomText(
-            shadows: [
-              Shadow(
-                blurRadius: 40,
-                color: Colors.blue,
-              ),
-            ],
-            text: 'Micasa',
-            fontSize: 70,
           ),
         ],
       ),

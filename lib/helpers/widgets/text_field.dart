@@ -20,6 +20,7 @@ class CustomTextField extends StatelessWidget {
       readOnly: isReadOnly,
       controller: controller,
       decoration: InputDecoration(
+        //border: OutlineInputBorder(),
         //fillColor: bgColor,
         // filled: true,
         labelText: hintText,

@@ -249,6 +249,7 @@ class InboxItem extends StatelessWidget {
                       name,
                       style: TextStyle(
                         fontSize: kMediumTextSize,
+                        color: kBlackColor,
                         fontWeight:
                             isMessageRead ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -260,7 +261,7 @@ class InboxItem extends StatelessWidget {
                       messageText,
                       style: TextStyle(
                         fontSize: kMediumTextSize,
-                        color: kBlackFaded,
+                        color: kBlackColor,
                         fontWeight:
                             isMessageRead ? FontWeight.bold : FontWeight.normal,
                       ),
@@ -275,7 +276,7 @@ class InboxItem extends StatelessWidget {
                 time,
                 style: TextStyle(
                   fontSize: kNormalTextSize,
-                  color: kBlackFaded,
+                  color: kBlackColor,
                   fontWeight:
                       isMessageRead ? FontWeight.bold : FontWeight.normal,
                 ),

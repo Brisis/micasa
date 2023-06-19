@@ -74,19 +74,24 @@ class _InboxMessagePageState extends State<InboxMessagePage> {
                         ),
                       ),
                       verticalSpace(height: 6),
-                      Text(
+                      const Text(
                         "Online",
                         style: TextStyle(
-                          color: Colors.grey.shade600,
+                          color: kSuccessColor,
+                          fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.settings,
-                  color: Colors.black54,
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.call,
+                    size: kIconLargeSize,
+                    color: kPrimaryColor,
+                  ),
                 ),
               ],
             ),
@@ -141,16 +146,16 @@ class _InboxMessagePageState extends State<InboxMessagePage> {
                   GestureDetector(
                     onTap: () {},
                     child: Container(
-                      height: 30,
-                      width: 30,
+                      height: 40,
+                      width: 40,
                       decoration: BoxDecoration(
                         color: kPrimaryColor,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
-                        Icons.add,
+                        Icons.attach_file,
                         color: Colors.white,
-                        size: 20,
+                        size: kIconSize,
                       ),
                     ),
                   ),
@@ -175,7 +180,7 @@ class _InboxMessagePageState extends State<InboxMessagePage> {
                     child: const Icon(
                       Icons.send,
                       color: Colors.white,
-                      size: 18,
+                      size: kIconSize,
                     ),
                   ),
                 ],

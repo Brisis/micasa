@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:micasa/helpers/constants.dart';
-import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:micasa/pages/auth/registration_page.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -14,12 +13,12 @@ class WelcomePage extends StatelessWidget {
         children: [
           Expanded(
             child: ClipPath(
-              clipper: DiagonalPathClipperOne(),
+              clipper: CustomClipPath(),
               child: Container(
                 decoration: const BoxDecoration(
                   color: kBackgroundColor,
                   image: DecorationImage(
-                    image: AssetImage("assets/images/h1.jpg"),
+                    image: AssetImage("assets/images/welcome1.jpg"),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -34,7 +33,7 @@ class WelcomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Perfect choice for your future",
+                    "A Perfect choice for your housing",
                     style: TextStyle(
                       color: kBlackColor,
                       fontSize: kHeaderTextSize,
@@ -49,7 +48,7 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   const Text(
-                    " - Made with love from Micasa Family.",
+                    " - Made with love from the Micasa Family",
                     style: TextStyle(
                       color: kBlackFaded,
                       fontSize: kMediumTextSize,
@@ -97,4 +96,30 @@ class WelcomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+class CustomClipPath extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0.0, size.height - 30);
+
+    var firstControlPoint = Offset(size.width / 4, size.height);
+    var firstPoint = Offset(size.width / 2, size.height);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
+        firstPoint.dx, firstPoint.dy);
+
+    var secondControlPoint = Offset(size.width - (size.width / 4), size.height);
+    var secondPoint = Offset(size.width, size.height - 30);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
+        secondPoint.dx, secondPoint.dy);
+
+    path.lineTo(size.width, 0.0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
