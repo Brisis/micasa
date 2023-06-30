@@ -1,11 +1,34 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:micasa/app_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
+import 'package:micasa/extensions/if_debugging.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/helpers/widgets/text_field.dart';
-import 'package:micasa/pages/auth/registration_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  //text controllers
+  final _emailController = TextEditingController(
+    text: "ben${Random().nextInt(10)}@gmail.com".ifDebugging,
+  );
+  final _passwordController = TextEditingController(
+    text: "football".ifDebugging,
+  );
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +49,10 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           verticalSpace(height: 15),
-          const EditFormSection(),
+          LoginFormSection(
+            emailController: _emailController,
+            passwordController: _passwordController,
+          ),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Row(
@@ -34,11 +60,15 @@ class LoginPage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        routeTransition(
-                          const AppView(),
-                        ),
-                      );
+                      final email = _emailController.text;
+                      final password = _passwordController.text;
+
+                      context.read<AppBloc>().add(
+                            AppEventLogIn(
+                              email: email,
+                              password: password,
+                            ),
+                          );
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
@@ -66,11 +96,9 @@ class LoginPage extends StatelessWidget {
           verticalSpace(),
           TextButton(
             onPressed: () {
-              Navigator.of(context).push(
-                routeTransition(
-                  const RegistrationPage(),
-                ),
-              );
+              context.read<AppBloc>().add(
+                    const AppEventGoToRegistration(),
+                  );
             },
             child: const Text(
               "Don't have an account, register instead.",
@@ -87,24 +115,15 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class EditFormSection extends StatefulWidget {
-  const EditFormSection({super.key});
+class LoginFormSection extends StatelessWidget {
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
 
-  @override
-  State<EditFormSection> createState() => _EditFormSectionState();
-}
-
-class _EditFormSectionState extends State<EditFormSection> {
-  //text controllers
-  final _emailAddressController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    super.dispose();
-    _emailAddressController.dispose();
-    _passwordController.dispose();
-  }
+  const LoginFormSection({
+    super.key,
+    required this.emailController,
+    required this.passwordController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -124,12 +143,12 @@ class _EditFormSectionState extends State<EditFormSection> {
           ),
           verticalSpace(),
           CustomTextField(
-            controller: _emailAddressController,
+            controller: emailController,
             hintText: 'Email Address',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _passwordController,
+            controller: passwordController,
             hintText: 'Password (atleast 6 characters)',
             isObsecure: true,
           ),

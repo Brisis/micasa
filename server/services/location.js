@@ -10,19 +10,23 @@ export async function registerLocation(name, map_coordinates){
             `, [name]
         );
 
-        //register location
-        const [location] = await poolConnection.query(
-            `
-            INSERT INTO locations (name, map_coordinates) 
-            VALUES (?, ?)
-            `, [name, map_coordinates]
-        );
-        
-        return {
-            id: location.insertId,
-            name: name,
-            map_coordinates: map_coordinates
-        };
+        if (nameCheck.length < 1) {
+            //register location
+            const [location] = await poolConnection.query(
+                `
+                INSERT INTO locations (name, map_coordinates) 
+                VALUES (?, ?)
+                `, [name, map_coordinates]
+            );
+            
+            return {
+                id: location.insertId,
+                name: name,
+                map_coordinates: map_coordinates
+            };
+        }
+
+        return "Location already registered";
         
     } catch (error) {
         return error;

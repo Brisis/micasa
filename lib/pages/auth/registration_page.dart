@@ -1,11 +1,38 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:micasa/app_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
+import 'package:micasa/extensions/if_debugging.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/helpers/widgets/text_field.dart';
-import 'package:micasa/pages/auth/login_page.dart';
 
-class RegistrationPage extends StatelessWidget {
+class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
+
+  @override
+  State<RegistrationPage> createState() => _RegistrationPageState();
+}
+
+class _RegistrationPageState extends State<RegistrationPage> {
+  //text controllers
+  final _nameController = TextEditingController(
+    text: "Ben Mudzinga".ifDebugging,
+  );
+  final _emailController = TextEditingController(
+    text: "ben${Random().nextInt(10)}@gmail.com".ifDebugging,
+  );
+  final _passwordController = TextEditingController(
+    text: "football".ifDebugging,
+  );
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +53,11 @@ class RegistrationPage extends StatelessWidget {
             ),
           ),
           verticalSpace(height: 15),
-          const EditFormSection(),
+          RegistrationFormSection(
+            nameController: _nameController,
+            emailController: _emailController,
+            passwordController: _passwordController,
+          ),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Row(
@@ -34,11 +65,17 @@ class RegistrationPage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        routeTransition(
-                          const AppView(),
-                        ),
-                      );
+                      final name = _nameController.text;
+                      final email = _emailController.text;
+                      final password = _passwordController.text;
+
+                      context.read<AppBloc>().add(
+                            AppEventRegister(
+                              name: name,
+                              email: email,
+                              password: password,
+                            ),
+                          );
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
@@ -66,11 +103,9 @@ class RegistrationPage extends StatelessWidget {
           verticalSpace(),
           TextButton(
             onPressed: () {
-              Navigator.of(context).push(
-                routeTransition(
-                  const LoginPage(),
-                ),
-              );
+              context.read<AppBloc>().add(
+                    const AppEventGoToLogin(),
+                  );
             },
             child: const Text(
               "Already registered, login.",
@@ -87,26 +122,17 @@ class RegistrationPage extends StatelessWidget {
   }
 }
 
-class EditFormSection extends StatefulWidget {
-  const EditFormSection({super.key});
+class RegistrationFormSection extends StatelessWidget {
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
 
-  @override
-  State<EditFormSection> createState() => _EditFormSectionState();
-}
-
-class _EditFormSectionState extends State<EditFormSection> {
-  //text controllers
-  final _nameController = TextEditingController();
-  final _emailAddressController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-    _emailAddressController.dispose();
-    _passwordController.dispose();
-  }
+  const RegistrationFormSection({
+    super.key,
+    required this.nameController,
+    required this.emailController,
+    required this.passwordController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,17 +152,17 @@ class _EditFormSectionState extends State<EditFormSection> {
           ),
           verticalSpace(),
           CustomTextField(
-            controller: _nameController,
+            controller: nameController,
             hintText: 'Full Name',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _emailAddressController,
+            controller: emailController,
             hintText: 'Email Address',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _passwordController,
+            controller: passwordController,
             hintText: 'Password (atleast 6 characters)',
             isObsecure: true,
           ),

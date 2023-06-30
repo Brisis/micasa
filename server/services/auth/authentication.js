@@ -63,7 +63,7 @@ export async function loginUser(email, password){
         var token = jwt.sign(
           { id: user.id },
           "the-super-strong-secrect",
-          { expiresIn: "1h" }
+          { expiresIn: "7d" }
         );
 
         const [queryDB] = await poolConnection.query(
@@ -107,7 +107,7 @@ export async function getUser(authorization){
     );
   
     return {
-      data: user,
+      user: user,
       message: "Fetch Successfully."
     };
   } catch (error) {

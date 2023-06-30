@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/helpers/widgets/text_field.dart';
+import 'package:micasa/models/user.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AppBloc>().state.user!;
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: ListView(
         children: [
           const EditProfileTopSection(),
           verticalSpace(height: 15),
-          const EditFormSection(),
+          EditFormSection(
+            user: user,
+          ),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Row(
@@ -105,34 +112,23 @@ class EditProfileTopSection extends StatelessWidget {
   }
 }
 
-class EditFormSection extends StatefulWidget {
-  const EditFormSection({super.key});
-
-  @override
-  State<EditFormSection> createState() => _EditFormSectionState();
-}
-
-class _EditFormSectionState extends State<EditFormSection> {
-  //text controllers
-  final _nameController =
-      TextEditingController(text: "Benevolent Mudzinganyama");
-  final _locationController =
-      TextEditingController(text: "Waterfalls, Harare, Zimbabwe");
-  final _emailAddressController =
-      TextEditingController(text: "benbeemudy@gmail.com");
-  final _joinedDateController = TextEditingController(text: "05/25/2023");
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-    _locationController.dispose();
-    _emailAddressController.dispose();
-    _joinedDateController.dispose();
-  }
+class EditFormSection extends HookWidget {
+  final User user;
+  EditFormSection({
+    super.key,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
+    //text controllers
+    final nameController = TextEditingController(text: user.name);
+    final locationController = TextEditingController(
+        text: "${user.locationId} - Waterfalls, Harare, Zimbabwe");
+    final emailAddressController = TextEditingController(text: user.email);
+    final joinedDateController =
+        TextEditingController(text: user.dateJoined.substring(0, 10));
+
     return Padding(
       padding: const EdgeInsets.all(30.0),
       child: Column(
@@ -140,23 +136,23 @@ class _EditFormSectionState extends State<EditFormSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextField(
-            controller: _nameController,
+            controller: nameController,
             hintText: 'Full Name',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _emailAddressController,
+            controller: emailAddressController,
             hintText: 'Email Address',
             isReadOnly: true,
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _locationController,
+            controller: locationController,
             hintText: "Physical Location",
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _joinedDateController,
+            controller: joinedDateController,
             hintText: 'Joined Date',
             isReadOnly: true,
           ),

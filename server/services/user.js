@@ -5,7 +5,7 @@ export async function getUsers() {
     return users
 }
 
-export async function editUser(id){
+export async function updateUser(id){
     const [user] = await poolConnection.query(
         `
             SELECT * FROM users

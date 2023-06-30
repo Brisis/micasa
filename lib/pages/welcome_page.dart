@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/pages/auth/registration_page.dart';
 
@@ -59,11 +61,9 @@ class WelcomePage extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(
-                              routeTransition(
-                                const RegistrationPage(),
-                              ),
-                            );
+                            context.read<AppBloc>().add(
+                                  const AppEventGoToRegistration(),
+                                );
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/pages/extras/contact_page.dart';
 import 'package:micasa/pages/extras/tcs_page.dart';
@@ -73,11 +75,11 @@ class ProfileTopSection extends StatelessWidget {
             thickness: 1,
           ),
           verticalSpace(height: 15),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Text(
-              "Benevolent Mudzinganyama",
-              style: TextStyle(
+              context.watch<AppBloc>().state.user!.name,
+              style: const TextStyle(
                 color: kWhiteColor,
                 fontSize: kBigTextSize,
                 fontWeight: FontWeight.bold,

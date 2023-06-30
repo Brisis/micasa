@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS properties (
     id integer PRIMARY KEY AUTO_INCREMENT,
     location_id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    cover_image VARCHAR(255) NOT NULL,
-    video VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    cover_image VARCHAR(255) DEFAULT NULL,
+    video VARCHAR(255) DEFAULT NULL,
     description TEXT NOT NULL,
     amenities TEXT NOT NULL,
     category VARCHAR(50) NOT NULL,
