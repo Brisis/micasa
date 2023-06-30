@@ -41,7 +41,7 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   const Text(
-                    "Our properties are masterpieces for all our clients with lasting value!",
+                    "Our properties are masterpieces for all our clients with lasting value",
                     style: TextStyle(
                       color: kBlackColor,
                       fontSize: kBigTextSize,

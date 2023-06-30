@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS users (
+    id integer PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    location_id INT DEFAULT 1,
+    email NVARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    dateJoined TIMESTAMP NOT NULL DEFAULT NOW(),
+    created TIMESTAMP NOT NULL DEFAULT NOW(),
+    last_login TIMESTAMP NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (location_id) REFERENCES locations (id)
+);

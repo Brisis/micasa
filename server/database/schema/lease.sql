@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS leases (
+    id integer PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    national_id NVARCHAR(30) NOT NULL,
+    dob VARCHAR(30) NOT NULL,
+    occupation VARCHAR(255) NOT NULL,
+    period_employed INT NOT NULL,
+    employer_name VARCHAR(255) NOT NULL,
+    salary INT NOT NULL,
+    business_address TEXT NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    current_address TEXT NOT NULL,
+    home_phone VARCHAR(20) NOT NULL,
+    familySize INT NOT NULL,
+    nextOfKin VARCHAR(255) NOT NULL,
+    nextOfKin_phone VARCHAR(20) NOT NULL,
+    nextOfKin_address TEXT NOT NULL,
+    signature VARCHAR(30) NOT NULL,
+    created TIMESTAMP NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);

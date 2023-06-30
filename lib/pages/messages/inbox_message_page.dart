@@ -121,8 +121,8 @@ class _InboxMessagePageState extends State<InboxMessagePage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: (messages[index].messageType == "receiver"
-                          ? Colors.grey.shade300
-                          : Colors.blue[200]),
+                          ? const Color.fromARGB(159, 224, 224, 224)
+                          : Color.fromARGB(116, 144, 202, 249)),
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Text(
