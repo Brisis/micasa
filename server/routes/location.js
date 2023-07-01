@@ -14,3 +14,9 @@ locationRouter.get('/locations', async (req, res) => {
     const query = await getLocations()
     res.send(query)
 })
+
+locationRouter.get('/locations/:id', async (req, res) => {
+    const id = req.params.id
+    const query = await getLocation(id)
+    res.send(query)
+})

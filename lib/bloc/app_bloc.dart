@@ -2,9 +2,15 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:micasa/global/token.dart';
+import 'package:micasa/models/app_exceptions.dart';
 import 'package:micasa/models/auth_error.dart';
+import 'package:micasa/models/lease.dart';
+import 'package:micasa/models/location.dart';
 import 'package:micasa/models/user.dart';
+import 'package:micasa/network/api_response.dart';
 import 'package:micasa/repository/auth.dart';
+import 'package:micasa/repository/lease.dart';
+import 'package:micasa/repository/location.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -39,11 +45,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
           if (user != null) {
             AUTH_TOKEN = authResponse.authToken;
+            final location = await LocationRepository().getLocation(
+              locationId: user.locationId,
+            );
 
             emit(
               AppStateLoggedIn(
                 isLoading: false,
                 user: user,
+                location: location,
               ),
             );
           }
@@ -74,6 +84,112 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       );
     });
 
+    on<AppEventGoToAppView>((event, emit) {
+      final user = state.user;
+      print(user);
+
+      if (user != null) {
+        emit(
+          AppStateLoggedIn(
+            isLoading: false,
+            user: user,
+            location: state.location!,
+          ),
+        );
+      } else {
+        print(user);
+        // emit(
+        //   const AppStateLoggedOut(
+        //     isLoading: false,
+        //   ),
+        // );
+      }
+    });
+
+    on<AppEventGoToEditProfilePage>((event, emit) {
+      emit(
+        AppStateIsInEditProfilePage(
+          isLoading: false,
+          user: state.user,
+          location: state.location,
+        ),
+      );
+    });
+
+    on<AppEventGoToBillingInformationPage>((event, emit) {
+      emit(
+        const AppStateIsInBillingInformationPage(
+          isLoading: false,
+        ),
+      );
+    });
+
+    on<AppEventGoToFavouritesPage>((event, emit) {
+      emit(
+        const AppStateIsInFavouritesPage(
+          isLoading: false,
+        ),
+      );
+    });
+
+    on<AppEventGoToRentalsPage>((event, emit) {
+      emit(
+        const AppStateIsInRentalsPage(
+          isLoading: false,
+        ),
+      );
+    });
+
+    on<AppEventGoToLeasePage>((event, emit) async {
+      try {
+        final leaseId = state.user!.id;
+
+        final lease = await LeaseRepository().getLease(
+          leaseId: leaseId,
+        );
+
+        emit(
+          AppStateIsInLeasePage(
+            isLoading: false,
+            lease: lease,
+            user: state.user!,
+          ),
+        );
+      } on AppException catch (e) {
+        if (e.code == 110) {
+          emit(
+            AppStateIsInLeasePage(
+              isLoading: false,
+              user: state.user!,
+            ),
+          );
+        } else {
+          emit(
+            AppStateLoggedOut(
+              isLoading: false,
+              authError: AuthError.from(e),
+            ),
+          );
+        }
+      }
+    });
+
+    on<AppEventGoToPrivacyTermsAndConditionsPage>((event, emit) {
+      emit(
+        const AppStateIsInPrivacyTermsAndConditionsPage(
+          isLoading: false,
+        ),
+      );
+    });
+
+    on<AppEventGoToContactPage>((event, emit) {
+      emit(
+        const AppStateIsInContactPage(
+          isLoading: false,
+        ),
+      );
+    });
+
     //auth events
 
     //login user
@@ -97,11 +213,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
         if (user != null) {
           AUTH_TOKEN = authResponse.authToken;
+          final location = await LocationRepository().getLocation(
+            locationId: user.locationId,
+          );
 
           emit(
             AppStateLoggedIn(
               isLoading: false,
               user: user,
+              location: location,
             ),
           );
         }
@@ -145,11 +265,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
           if (user != null) {
             AUTH_TOKEN = authResponse.authToken;
+            final location = await LocationRepository().getLocation(
+              locationId: user.locationId,
+            );
 
             emit(
               AppStateLoggedIn(
                 isLoading: false,
                 user: user,
+                location: location,
               ),
             );
           }
@@ -165,6 +289,71 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     });
 
     // user account events
+
+    on<AppEventRegisterLease>((event, emit) async {
+      final user = state.user!;
+      // start loading
+      emit(
+        AppStateIsInLeasePage(
+          isLoading: true,
+          user: user,
+        ),
+      );
+
+      final userId = user.id;
+      final nationalId = event.nationalId;
+      final dateOfBirth = event.dateOfBirth;
+      final occupation = event.occupation;
+      final periodEmployedInMonths = event.periodEmployedInMonths;
+      final employerName = event.employerName;
+      final salary = event.salary;
+      final businessAddress = event.businessAddress;
+      final phoneNumber = event.phoneNumber;
+      final currentHomeAddress = event.currentHomeAddress;
+      final homePhoneNumber = event.homePhoneNumber;
+      final familySize = event.familySize;
+      final nextOfKin = event.nextOfKin;
+      final nextOfKinPhoneNumber = event.nextOfKinPhoneNumber;
+      final nextOfKinAddress = event.nextOfKinAddress;
+      final signature = event.signature;
+
+      try {
+        final response = await LeaseRepository().registerLease(
+          userId: userId,
+          nationalId: nationalId,
+          dateOfBirth: dateOfBirth,
+          occupation: occupation,
+          periodEmployedInMonths: periodEmployedInMonths,
+          employerName: employerName,
+          salary: salary,
+          businessAddress: businessAddress,
+          phoneNumber: phoneNumber,
+          currentHomeAddress: currentHomeAddress,
+          homePhoneNumber: homePhoneNumber,
+          familySize: familySize,
+          nextOfKin: nextOfKin,
+          nextOfKinPhoneNumber: nextOfKinPhoneNumber,
+          nextOfKinAddress: nextOfKinAddress,
+          signature: signature,
+        );
+
+        emit(
+          AppStateIsInLeasePage(
+            isLoading: false,
+            lease: response,
+            user: user,
+          ),
+        );
+      } on Exception catch (e) {
+        emit(
+          AppStateIsInLeasePage(
+            isLoading: false,
+            user: user,
+            authError: AuthError.from(e),
+          ),
+        );
+      }
+    });
 
     //handle user sign out
     // on<AppEventLogOut>((event, emit) async {

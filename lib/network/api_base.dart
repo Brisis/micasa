@@ -10,12 +10,13 @@ class ApiBaseHelper {
   final String _baseUrl = "http://192.168.254.61:8000/"; //and
   //final String _baseUrl = "http://localhost:8000/"; //win
 
-  Future<dynamic> get(String url) async {
+  Future<dynamic> get({required String url}) async {
     try {
       final response = await http.get(Uri.parse(_baseUrl + url));
+      print(response.body);
       return _returnResponse(response);
     } on SocketException {
-      throw FetchDataException(message: 'No Internet connection');
+      throw FetchDataException(message: 'No Internet connection', code: 0);
     }
   }
 
@@ -40,7 +41,7 @@ class ApiBaseHelper {
       print(response.body);
       return _returnResponse(response);
     } on SocketException {
-      throw FetchDataException(message: 'No Internet connection');
+      throw FetchDataException(message: 'No Internet connection', code: 0);
     }
   }
 
@@ -48,18 +49,18 @@ class ApiBaseHelper {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
-        print(responseJson);
         return responseJson;
       case 400:
-        throw BadRequestException(message: response.body.toString());
+        throw BadRequestException(message: response.body.toString(), code: 400);
       case 401:
       case 403:
-        throw UnauthorisedException(message: response.body.toString());
+        throw UnauthorisedException(
+            message: response.body.toString(), code: 403);
       case 500:
       default:
         throw FetchDataException(
-          message:
-              'Error occured while Communication with Server with StatusCode : ${response.statusCode}',
+          message: 'Error occured while Communication with Server',
+          code: response.statusCode,
         );
     }
   }

@@ -1,50 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/helpers/widgets/text_field.dart';
+import 'package:micasa/models/lease.dart';
+import 'package:micasa/models/user.dart';
 
 class LeasePage extends StatelessWidget {
   const LeasePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final lease = context.watch<AppBloc>().state.lease;
+    final user = context.watch<AppBloc>().state.user!;
+
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: ListView(
         children: [
           const LeaseTopSection(),
           verticalSpace(height: 15),
-          const EditFormSection(),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.all(10.0),
-                      ),
-                      backgroundColor: MaterialStateProperty.all(kPrimaryColor),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      "Save Changes",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          EditFormSection(
+            user: user,
+            lease: lease,
           ),
         ],
       ),
@@ -105,60 +84,65 @@ class LeaseTopSection extends StatelessWidget {
   }
 }
 
-class EditFormSection extends StatefulWidget {
-  const EditFormSection({super.key});
+class EditFormSection extends HookWidget {
+  final Lease? lease;
+  final User user;
 
-  @override
-  State<EditFormSection> createState() => _EditFormSectionState();
-}
-
-class _EditFormSectionState extends State<EditFormSection> {
-  //text controllers
-  final _nameController =
-      TextEditingController(text: "Benevolent Mudzinganyama");
-  final _identityNumberController = TextEditingController(text: "23-143578M23");
-  final _dateOfBirthController = TextEditingController(text: "07/25/2023");
-  final _occupationController =
-      TextEditingController(text: "Software Engineer");
-  final _periodEmployedController = TextEditingController(text: "2 years");
-  final _employerController = TextEditingController(text: "Itinordic");
-  final _salaryController = TextEditingController(text: "\$800 USD");
-  final _businessAddressController =
-      TextEditingController(text: "Bainnes Avenue, Harare");
-  final _phoneNumberController = TextEditingController(text: "0784174687");
-  final _residentialAddressController =
-      TextEditingController(text: "Waterfalls, Prospect");
-  final _homePhoneNumberController = TextEditingController(text: "+263988917");
-  final _familySizeController = TextEditingController(text: "3");
-  final _nextOfKinController =
-      TextEditingController(text: "Tinashe Mudzinganyama");
-  final _nextOfKinPhoneNumberController =
-      TextEditingController(text: "0776071106");
-  final _nextOfKinAddressController =
-      TextEditingController(text: "Gokwe, Mapfungautsi");
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-    _identityNumberController.dispose();
-    _dateOfBirthController.dispose();
-    _occupationController.dispose();
-    _periodEmployedController.dispose();
-    _employerController.dispose();
-    _salaryController.dispose();
-    _businessAddressController.dispose();
-    _phoneNumberController.dispose();
-    _residentialAddressController.dispose();
-    _homePhoneNumberController.dispose();
-    _familySizeController.dispose();
-    _nextOfKinController.dispose();
-    _nextOfKinPhoneNumberController.dispose();
-    _nextOfKinAddressController.dispose();
-  }
+  const EditFormSection({
+    super.key,
+    this.lease,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
+    //text controllers
+    final nameController = TextEditingController(text: user.name);
+    final identityNumberController = TextEditingController(
+      text: lease != null ? lease!.nationalId : null,
+    );
+    final dateOfBirthController = TextEditingController(
+      text: lease != null ? lease!.dateOfBirth : null,
+    );
+    final occupationController = TextEditingController(
+      text: lease != null ? lease!.occupation : null,
+    );
+    final periodEmployedController = TextEditingController(
+      text: lease != null ? lease!.periodEmployedInMonths.toString() : null,
+    );
+    final employerController = TextEditingController(
+      text: lease != null ? lease!.employerName : null,
+    );
+    final salaryController = TextEditingController(
+      text: lease != null ? lease!.salary.toString() : null,
+    );
+    final businessAddressController = TextEditingController(
+      text: lease != null ? lease!.businessAddress : null,
+    );
+    final phoneNumberController = TextEditingController(
+      text: lease != null ? lease!.phoneNumber : null,
+    );
+    final residentialAddressController = TextEditingController(
+      text: lease != null ? lease!.currentHomeAddress : null,
+    );
+    final homePhoneNumberController = TextEditingController(
+      text: lease != null ? lease!.homePhoneNumber : null,
+    );
+    final familySizeController = TextEditingController(
+      text: lease != null ? lease!.familySize.toString() : null,
+    );
+    final nextOfKinController = TextEditingController(
+      text: lease != null ? lease!.nextOfKin : null,
+    );
+    final nextOfKinPhoneNumberController = TextEditingController(
+      text: lease != null ? lease!.nextOfKinPhoneNumber : null,
+    );
+    final nextOfKinAddressController = TextEditingController(
+      text: lease != null ? lease!.nextOfKinAddress : null,
+    );
+    final signatureController = TextEditingController(
+      text: lease != null ? lease!.signature : null,
+    );
     return Padding(
       padding: const EdgeInsets.all(30.0),
       child: Column(
@@ -166,78 +150,153 @@ class _EditFormSectionState extends State<EditFormSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextField(
-            controller: _nameController,
+            controller: nameController,
             hintText: 'Full Name',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _identityNumberController,
+            controller: identityNumberController,
             hintText: 'National ID Number',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _dateOfBirthController,
+            controller: dateOfBirthController,
             hintText: 'Date of Birth',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _occupationController,
+            controller: occupationController,
             hintText: 'Occupation/Work',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _periodEmployedController,
+            controller: periodEmployedController,
             hintText: 'Period Employed in Months',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _employerController,
+            controller: employerController,
             hintText: 'Employer Name',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _salaryController,
+            controller: salaryController,
             hintText: 'Salary/Income per Month',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _businessAddressController,
+            controller: businessAddressController,
             hintText: 'Business Address',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _phoneNumberController,
+            controller: phoneNumberController,
             hintText: 'Phone Number',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _residentialAddressController,
+            controller: residentialAddressController,
             hintText: 'Residential Address (current)',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _homePhoneNumberController,
+            controller: homePhoneNumberController,
             hintText: 'Home Phone Number',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _familySizeController,
+            controller: familySizeController,
             hintText: 'Family Size',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _nextOfKinController,
+            controller: nextOfKinController,
             hintText: 'Next of Kin',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _nextOfKinPhoneNumberController,
+            controller: nextOfKinPhoneNumberController,
             hintText: 'Next of Kin Phone Number',
           ),
           verticalSpace(height: 15),
           CustomTextField(
-            controller: _nextOfKinAddressController,
+            controller: nextOfKinAddressController,
             hintText: 'Next of Kin Address',
+          ),
+          verticalSpace(height: 15),
+          CustomTextField(
+            controller: signatureController,
+            hintText: 'Signature (can be initials)',
+          ),
+          verticalSpace(height: 30),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final userId = user.id;
+                    final nationalId = identityNumberController.text;
+                    final dateOfBirth = dateOfBirthController.text;
+                    final occupation = occupationController.text;
+                    final periodEmployedInMonths =
+                        periodEmployedController.text;
+                    final employerName = employerController.text;
+                    final salary = salaryController.text;
+                    final businessAddress = businessAddressController.text;
+                    final phoneNumber = phoneNumberController.text;
+                    final currentHomeAddress =
+                        residentialAddressController.text;
+                    final homePhoneNumber = homePhoneNumberController.text;
+                    final familySize = familySizeController.text;
+                    final nextOfKin = nextOfKinController.text;
+                    final nextOfKinPhoneNumber =
+                        nextOfKinPhoneNumberController.text;
+                    final nextOfKinAddress = nextOfKinAddressController.text;
+                    final signature = signatureController.text;
+
+                    context.read<AppBloc>().add(
+                          AppEventRegisterLease(
+                            userId: userId,
+                            nationalId: nationalId,
+                            dateOfBirth: dateOfBirth,
+                            occupation: occupation,
+                            periodEmployedInMonths:
+                                int.parse(periodEmployedInMonths),
+                            employerName: employerName,
+                            salary: int.parse(salary),
+                            businessAddress: businessAddress,
+                            phoneNumber: phoneNumber,
+                            currentHomeAddress: currentHomeAddress,
+                            homePhoneNumber: homePhoneNumber,
+                            familySize: int.parse(familySize),
+                            nextOfKin: nextOfKin,
+                            nextOfKinPhoneNumber: nextOfKinPhoneNumber,
+                            nextOfKinAddress: nextOfKinAddress,
+                            signature: signature,
+                          ),
+                        );
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.all(10.0),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(kPrimaryColor),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "Save Changes",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

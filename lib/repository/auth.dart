@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:micasa/models/auth_response.dart';
-import 'package:micasa/models/user.dart';
 import 'package:micasa/network/api_base.dart';
 
 @immutable

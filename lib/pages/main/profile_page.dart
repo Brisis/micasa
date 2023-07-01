@@ -8,7 +8,6 @@ import 'package:micasa/pages/extras/tcs_page.dart';
 import 'package:micasa/pages/profile/billing_information_page.dart';
 import 'package:micasa/pages/profile/edit_profile_page.dart';
 import 'package:micasa/pages/profile/favourites_page.dart';
-import 'package:micasa/pages/profile/lease_page.dart';
 import 'package:micasa/pages/profile/rentals_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -108,8 +107,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "Edit Profile",
             icon: Icons.edit,
             onTap: () {
-              Navigator.of(context)
-                  .push(routeTransition(const EditProfilePage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToEditProfilePage(),
+                  );
             },
           ),
           verticalSpace(height: 15),
@@ -117,8 +117,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "Billing Information",
             icon: Icons.payment,
             onTap: () {
-              Navigator.of(context)
-                  .push(routeTransition(const BillingInformationPage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToBillingInformationPage(),
+                  );
             },
           ),
           verticalSpace(height: 15),
@@ -126,8 +127,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "My Favourites",
             icon: CupertinoIcons.heart_circle,
             onTap: () {
-              Navigator.of(context)
-                  .push(routeTransition(const FavouritesPage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToFavouritesPage(),
+                  );
             },
           ),
           verticalSpace(height: 15),
@@ -135,7 +137,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "Rentals",
             icon: Icons.other_houses_outlined,
             onTap: () {
-              Navigator.of(context).push(routeTransition(const RentalsPage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToRentalsPage(),
+                  );
             },
           ),
           verticalSpace(height: 15),
@@ -143,7 +147,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "Lease Agreement",
             icon: Icons.verified_user_outlined,
             onTap: () {
-              Navigator.of(context).push(routeTransition(const LeasePage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToLeasePage(),
+                  );
             },
           ),
           verticalSpace(height: 15),
@@ -151,8 +157,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "Privacy, Terms and Conditions",
             icon: Icons.privacy_tip_outlined,
             onTap: () {
-              Navigator.of(context)
-                  .push(routeTransition(const PrivacyTermsAndConditionsPage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToPrivacyTermsAndConditionsPage(),
+                  );
             },
           ),
           verticalSpace(height: 15),
@@ -160,7 +167,9 @@ class ProfileMenusSection extends StatelessWidget {
             title: "Contact Us",
             icon: Icons.phone,
             onTap: () {
-              Navigator.of(context).push(routeTransition(const ContactPage()));
+              context.read<AppBloc>().add(
+                    const AppEventGoToContactPage(),
+                  );
             },
           ),
         ],

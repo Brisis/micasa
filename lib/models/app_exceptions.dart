@@ -1,8 +1,11 @@
 class AppException implements Exception {
   final String message;
+  final int code;
   String? prefix;
+
   AppException({
     required this.message,
+    required this.code,
     this.prefix,
   });
 
@@ -13,6 +16,7 @@ class AppException implements Exception {
 class FetchDataException extends AppException {
   FetchDataException({
     required super.message,
+    required super.code,
     super.prefix = "Error During Communication: ",
   });
 }
@@ -20,6 +24,7 @@ class FetchDataException extends AppException {
 class BadRequestException extends AppException {
   BadRequestException({
     required super.message,
+    required super.code,
     super.prefix = "Invalid Request: ",
   });
 }
@@ -27,6 +32,7 @@ class BadRequestException extends AppException {
 class UnauthorisedException extends AppException {
   UnauthorisedException({
     required super.message,
+    required super.code,
     super.prefix = "Unauthorised: ",
   });
 }
@@ -34,6 +40,7 @@ class UnauthorisedException extends AppException {
 class InvalidInputException extends AppException {
   InvalidInputException({
     required super.message,
+    required super.code,
     super.prefix = "Invalid Input: ",
   });
 }

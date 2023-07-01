@@ -5,6 +5,7 @@ import pkg from 'body-parser';
 import { locationRouter } from './routes/location.js';
 import { propertyRouter } from './routes/property.js';
 import { userRouter } from './routes/user.js';
+import { leaseRouter } from './routes/lease.js';
 const bodyParser  = pkg;
 
 const app = express()
@@ -22,6 +23,7 @@ app.use('/api', authRouter);
 app.use('/api', locationRouter);
 app.use('/api', propertyRouter);
 app.use('/api', userRouter);
+app.use('/api', leaseRouter);
 
 // app.get('/notes/:id', async (req, res) => {
 //     const id = req.params.id

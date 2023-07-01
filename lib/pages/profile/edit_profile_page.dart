@@ -78,7 +78,9 @@ class EditProfileTopSection extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    context.read<AppBloc>().add(
+                          const AppEventGoToAppView(),
+                        );
                   },
                   child: Container(
                     height: 50,
@@ -121,10 +123,13 @@ class EditFormSection extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final location = context.watch<AppBloc>().state.location!;
+
     //text controllers
     final nameController = TextEditingController(text: user.name);
     final locationController = TextEditingController(
-        text: "${user.locationId} - Waterfalls, Harare, Zimbabwe");
+      text: location.name,
+    );
     final emailAddressController = TextEditingController(text: user.email);
     final joinedDateController =
         TextEditingController(text: user.dateJoined.substring(0, 10));
