@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:micasa/models/location.dart';
 import 'package:micasa/network/api_base.dart';
