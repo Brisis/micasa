@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/helpers/widgets/text_field.dart';
 
@@ -71,7 +73,11 @@ class BillingInformationTopSection extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    context.read<AppBloc>().add(
+                          const AppEventGoToAppView(
+                            tabIndex: 4,
+                          ),
+                        );
                   },
                   child: Container(
                     height: 50,

@@ -115,32 +115,26 @@ export async function updateLease(
 ){
     try {
         //check if lease is registered
-        const [leaseCheck] = await poolConnection.query(
-            `
-            SELECT * FROM leases 
-            WHERE id = ?;
-            `, [leaseId]
-        );
+        const lease = await getLease(leaseId);
 
-        if (leaseCheck.length > 1) {
+        if (lease != null) {
             //register lease
-            const [lease] = await poolConnection.query(
+            const [leaseQuery] = await poolConnection.query(
                 `
-                INSERT INTO leases (
-                    occupation,
-                    periodEmployedInMonths,
-                    employerName,
-                    salary,
-                    businessAddress,
-                    phoneNumber,
-                    currentHomeAddress,
-                    homePhoneNumber,
-                    familySize,
-                    nextOfKin,
-                    nextOfKinPhoneNumber,
-                    nextOfKinAddress
-                ) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                UPDATE leases
+                SET occupation = ?, 
+                    periodEmployedInMonths = ?,
+                    employerName = ?,
+                    salary = ?,
+                    businessAddress = ?,
+                    phoneNumber = ?,
+                    currentHomeAddress = ?,
+                    homePhoneNumber = ?,
+                    familySize = ?,
+                    nextOfKin = ?,
+                    nextOfKinPhoneNumber = ?,
+                    nextOfKinAddress = ?
+                WHERE id = ${leaseId};
                 `, [
                     occupation,
                     periodEmployedInMonths,
@@ -156,22 +150,10 @@ export async function updateLease(
                     nextOfKinAddress
                 ]
             );
+
+            const updatedLease = await getLease(leaseId);
             
-            return {
-                id: lease.insertId,
-                occupation: occupation,
-                periodEmployedInMonths: periodEmployedInMonths,
-                employerName: employerName,
-                salary: salary,
-                businessAddress: businessAddress,
-                phoneNumber: phoneNumber,
-                currentHomeAddress: currentHomeAddress,
-                homePhoneNumber: homePhoneNumber,
-                familySize: familySize,
-                nextOfKin: nextOfKin,
-                nextOfKinPhoneNumber: nextOfKinPhoneNumber,
-                nextOfKinAddress: nextOfKinAddress
-            };
+            return updatedLease;
         }
 
         return "Lease not found"
@@ -191,6 +173,22 @@ export async function getLease(id) {
         `
             SELECT * FROM leases
             WHERE id = ?
+        `, 
+        [id]
+        )
+
+    if (lease.length < 1) {
+        return "Lease not Found";
+    }
+
+    return lease[0]
+}
+
+export async function getUserLease(id) {
+    const [lease] = await poolConnection.query(
+        `
+            SELECT * FROM leases
+            WHERE user_id = ?
         `, 
         [id]
         )

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/pages/main/activity_page.dart';
 import 'package:micasa/pages/main/explore_page.dart';
@@ -6,15 +8,8 @@ import 'package:micasa/pages/main/home_page.dart';
 import 'package:micasa/pages/main/inbox_page.dart';
 import 'package:micasa/pages/main/profile_page.dart';
 
-class AppView extends StatefulWidget {
+class AppView extends StatelessWidget {
   const AppView({super.key});
-
-  @override
-  State<AppView> createState() => _AppViewState();
-}
-
-class _AppViewState extends State<AppView> {
-  int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     ExplorePage(),
@@ -23,19 +18,22 @@ class _AppViewState extends State<AppView> {
     ProfilePage(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<AppBloc>().state;
+    // print(state.tabIndex);
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: _widgetOptions.elementAt(state.tabIndex!),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: state.tabIndex!,
+        onTap: (index) {
+          //print(index);
+          context.read<AppBloc>().add(
+                AppEventGoToAppView(
+                  tabIndex: index,
+                ),
+              );
+        },
         selectedItemColor: kPrimaryColor,
         showSelectedLabels: true,
         showUnselectedLabels: true,

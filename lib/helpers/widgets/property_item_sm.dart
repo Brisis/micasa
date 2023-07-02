@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:micasa/global/server_url.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/pages/property/property_page.dart';
 
 class PropertySmallItem extends StatelessWidget {
   final String name;
-  final String location;
-  final String imageUrl;
+  final int price;
+  final String? imageUrl;
   const PropertySmallItem({
     super.key,
     required this.name,
-    required this.location,
-    required this.imageUrl,
+    required this.price,
+    this.imageUrl,
   });
 
   @override
@@ -30,10 +31,16 @@ class PropertySmallItem extends StatelessWidget {
             width: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(3),
-              image: DecorationImage(
-                image: AssetImage(imageUrl),
-                fit: BoxFit.cover,
-              ),
+              image: imageUrl != null
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          "${LOCAL_SERVER_URL}thumbnails/${imageUrl!}"),
+                      fit: BoxFit.cover,
+                    )
+                  : const DecorationImage(
+                      image: AssetImage("assets/images/h1.jpg"),
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           horizontalSpace(),
@@ -56,13 +63,18 @@ class PropertySmallItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // const Icon(
+                    //   Icons.room_outlined,
+                    //   color: kBlackFaded,
+                    //   size: 15,
+                    // ),
                     const Icon(
-                      Icons.room_outlined,
+                      Icons.attach_money,
                       color: kBlackFaded,
                       size: 15,
                     ),
                     Text(
-                      location,
+                      "$price",
                       style: const TextStyle(
                         color: kBlackFaded,
                         fontSize: kNormalTextSize,

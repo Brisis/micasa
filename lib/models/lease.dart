@@ -41,9 +41,9 @@ class Lease extends Equatable {
 
   Lease.fromJson(Map<String, dynamic> json)
       : id = json["id"] as int,
-        userId = json["userId"] as int,
-        nationalId = json["nationalId"] as String,
-        dateOfBirth = json["dateOfBirth"] as String,
+        userId = json["user_id"] as int,
+        nationalId = json["national_id"] as String,
+        dateOfBirth = json["dob"] as String,
         occupation = json["occupation"] as String,
         periodEmployedInMonths = json["periodEmployedInMonths"] as int,
         employerName = json["employerName"] as String,

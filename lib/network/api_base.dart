@@ -13,7 +13,7 @@ class ApiBaseHelper {
   Future<dynamic> get({required String url}) async {
     try {
       final response = await http.get(Uri.parse(_baseUrl + url));
-      print(response.body);
+      //print(response.body);
       return _returnResponse(response);
     } on SocketException {
       throw FetchDataException(message: 'No Internet connection', code: 0);
@@ -28,6 +28,31 @@ class ApiBaseHelper {
     try {
       final route = Uri.parse(_baseUrl + url);
       final response = await http.post(
+        route,
+        headers: headers ??
+            {
+              "Content-Type": "application/json",
+              "accept": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            },
+        body: body,
+      );
+      //print(route);
+      print(response.body);
+      return _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException(message: 'No Internet connection', code: 0);
+    }
+  }
+
+  Future<dynamic> put({
+    required String url,
+    Map<String, String>? headers,
+    Object? body,
+  }) async {
+    try {
+      final route = Uri.parse(_baseUrl + url);
+      final response = await http.put(
         route,
         headers: headers ??
             {

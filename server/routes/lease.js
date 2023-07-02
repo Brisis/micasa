@@ -1,6 +1,6 @@
 import express from "express";
 export const leaseRouter = express();
-import { registerLease, updateLease, getLeases, getLease } from "../services/lease.js";
+import { registerLease, updateLease, getLeases, getUserLease } from "../services/lease.js";
 
 leaseRouter.post('/leases', async (req, res) => {
     const userId = req.body.userId
@@ -82,7 +82,7 @@ leaseRouter.get('/leases', async (req, res) => {
 
 leaseRouter.get('/leases/:id', async (req, res) => {
     const id = req.params.id
-    const query = await getLease(id)
+    const query = await getUserLease(id)
     if (query == "Lease not Found") {
         res.status(110);
     }

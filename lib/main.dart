@@ -9,6 +9,7 @@ import 'package:micasa/pages/auth/login_page.dart';
 import 'package:micasa/pages/auth/registration_page.dart';
 import 'package:micasa/pages/extras/contact_page.dart';
 import 'package:micasa/pages/extras/tcs_page.dart';
+import 'package:micasa/pages/loading_app_page.dart';
 import 'package:micasa/pages/profile/billing_information_page.dart';
 import 'package:micasa/pages/profile/edit_profile_page.dart';
 import 'package:micasa/pages/profile/favourites_page.dart';
@@ -58,11 +59,16 @@ class AppMain extends StatelessWidget {
               return const WelcomePage();
             }
 
+            if (appState is AppStateLoadAppPage) {
+              return const LoadingAppPage();
+            }
+
             if (appState is AppStateLoggedOut) {
               return const LoginPage();
             }
 
             if (appState is AppStateLoggedIn) {
+              // print(appState.properties);
               return const AppView();
             }
 

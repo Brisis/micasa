@@ -75,7 +75,7 @@ export async function loginUser(email, password){
         );
   
         return {
-          msg: "Logged in!",
+          message: "Logged in!",
           token: token,
           user: user,
         };
@@ -107,8 +107,8 @@ export async function getUser(authorization){
     );
   
     return {
-      user: user,
-      message: "Fetch Successfully."
+      message: "Fetch Successfully.",
+      user: user[0]
     };
   } catch (error) {
     return error;

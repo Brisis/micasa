@@ -79,7 +79,9 @@ class EditProfileTopSection extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     context.read<AppBloc>().add(
-                          const AppEventGoToAppView(),
+                          const AppEventGoToAppView(
+                            tabIndex: 4,
+                          ),
                         );
                   },
                   child: Container(

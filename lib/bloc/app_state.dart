@@ -5,12 +5,14 @@ abstract class AppState extends Equatable {
   final AuthError? authError;
   final User? user;
   final Location? location;
+  final List<Property>? properties;
 
   const AppState({
     required this.isLoading,
     this.user,
     this.location,
     this.authError,
+    this.properties,
   });
 
   @override
@@ -21,23 +23,38 @@ class AppStateInitial extends AppState {
   const AppStateInitial({required super.isLoading});
 }
 
+class AppStateLoadAppPage extends AppState {
+  const AppStateLoadAppPage({required super.isLoading});
+}
+
 @immutable
 class AppStateLoggedIn extends AppState {
-  final User user;
-  final Location location;
+  final int? tabIndex;
 
   const AppStateLoggedIn({
     required bool isLoading,
-    required this.user,
-    required this.location,
+    User? user,
+    Location? location,
+    List<Property>? properties,
     AuthError? authError,
+    this.tabIndex = 0,
   }) : super(
           isLoading: isLoading,
           authError: authError,
+          user: user,
+          location: location,
+          properties: properties,
         );
 
   @override
-  List<Object> get props => [isLoading, user, location, "$authError"];
+  List<Object> get props => [
+        isLoading,
+        "$user",
+        "$location",
+        "$properties",
+        "$authError",
+        "$tabIndex",
+      ];
 
   @override
   bool? get stringify => true;
@@ -119,14 +136,18 @@ class AppStateIsInEditProfilePage extends AppState {
 class AppStateIsInBillingInformationPage extends AppState {
   const AppStateIsInBillingInformationPage({
     required bool isLoading,
+    User? user,
+    Location? location,
     AuthError? authError,
   }) : super(
           isLoading: isLoading,
+          user: user,
+          location: location,
           authError: authError,
         );
 
   @override
-  List<Object> get props => [isLoading, "$authError"];
+  List<Object> get props => [isLoading, "$user", "$location" "$authError"];
 
   @override
   bool? get stringify => true;
@@ -136,14 +157,18 @@ class AppStateIsInBillingInformationPage extends AppState {
 class AppStateIsInFavouritesPage extends AppState {
   const AppStateIsInFavouritesPage({
     required bool isLoading,
+    User? user,
+    Location? location,
     AuthError? authError,
   }) : super(
           isLoading: isLoading,
+          user: user,
+          location: location,
           authError: authError,
         );
 
   @override
-  List<Object> get props => [isLoading, "$authError"];
+  List<Object> get props => [isLoading, "$user", "$location" "$authError"];
 
   @override
   bool? get stringify => true;
@@ -153,14 +178,18 @@ class AppStateIsInFavouritesPage extends AppState {
 class AppStateIsInRentalsPage extends AppState {
   const AppStateIsInRentalsPage({
     required bool isLoading,
+    User? user,
+    Location? location,
     AuthError? authError,
   }) : super(
           isLoading: isLoading,
+          user: user,
+          location: location,
           authError: authError,
         );
 
   @override
-  List<Object> get props => [isLoading, "$authError"];
+  List<Object> get props => [isLoading, "$user", "$location" "$authError"];
 
   @override
   bool? get stringify => true;
@@ -169,19 +198,22 @@ class AppStateIsInRentalsPage extends AppState {
 @immutable
 class AppStateIsInLeasePage extends AppState {
   final Lease? lease;
-  final User user;
   const AppStateIsInLeasePage({
     this.lease,
-    required this.user,
+    User? user,
+    Location? location,
     required bool isLoading,
     AuthError? authError,
   }) : super(
           isLoading: isLoading,
+          user: user,
+          location: location,
           authError: authError,
         );
 
   @override
-  List<Object> get props => ["$lease", user, isLoading, "$authError"];
+  List<Object> get props =>
+      ["$lease", "$user", "$location", isLoading, "$authError"];
 
   @override
   bool? get stringify => true;
@@ -191,14 +223,18 @@ class AppStateIsInLeasePage extends AppState {
 class AppStateIsInPrivacyTermsAndConditionsPage extends AppState {
   const AppStateIsInPrivacyTermsAndConditionsPage({
     required bool isLoading,
+    User? user,
+    Location? location,
     AuthError? authError,
   }) : super(
           isLoading: isLoading,
+          user: user,
+          location: location,
           authError: authError,
         );
 
   @override
-  List<Object> get props => [isLoading, "$authError"];
+  List<Object> get props => [isLoading, "$user", "$location" "$authError"];
 
   @override
   bool? get stringify => true;
@@ -208,14 +244,18 @@ class AppStateIsInPrivacyTermsAndConditionsPage extends AppState {
 class AppStateIsInContactPage extends AppState {
   const AppStateIsInContactPage({
     required bool isLoading,
+    User? user,
+    Location? location,
     AuthError? authError,
   }) : super(
           isLoading: isLoading,
+          user: user,
+          location: location,
           authError: authError,
         );
 
   @override
-  List<Object> get props => [isLoading, "$authError"];
+  List<Object> get props => [isLoading, "$user", "$location" "$authError"];
 
   @override
   bool? get stringify => true;
@@ -230,10 +270,22 @@ extension GetUser on AppState {
       return cls.user;
     } else if (cls is AppStateLoggedIn) {
       return cls.user;
-    } else if (cls is AppStateIsInLeasePage) {
-      return cls.user;
     } else {
       return null;
+    }
+  }
+}
+
+extension GetProperties on AppState {
+  // cls -> class name
+  List<Property>? get properties {
+    final cls = this;
+    if (cls.properties != []) {
+      return cls.properties;
+    } else if (cls is AppStateLoggedIn) {
+      return cls.properties;
+    } else {
+      return [];
     }
   }
 }
@@ -248,6 +300,18 @@ extension GetLocation on AppState {
       return cls.location;
     } else {
       return null;
+    }
+  }
+}
+
+extension GetTabIndex on AppState {
+  // cls -> class name
+  int? get tabIndex {
+    final cls = this;
+    if (cls is AppStateLoggedIn) {
+      return cls.tabIndex;
+    } else {
+      return 0;
     }
   }
 }

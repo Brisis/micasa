@@ -50,7 +50,11 @@ class LeaseTopSection extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    context.read<AppBloc>().add(
+                          const AppEventGoToAppView(
+                            tabIndex: 4,
+                          ),
+                        );
                   },
                   child: Container(
                     height: 50,
@@ -152,16 +156,19 @@ class EditFormSection extends HookWidget {
           CustomTextField(
             controller: nameController,
             hintText: 'Full Name',
+            isReadOnly: true,
           ),
           verticalSpace(height: 15),
           CustomTextField(
             controller: identityNumberController,
             hintText: 'National ID Number',
+            isReadOnly: lease != null,
           ),
           verticalSpace(height: 15),
           CustomTextField(
             controller: dateOfBirthController,
             hintText: 'Date of Birth',
+            isReadOnly: lease != null,
           ),
           verticalSpace(height: 15),
           CustomTextField(
@@ -227,6 +234,7 @@ class EditFormSection extends HookWidget {
           CustomTextField(
             controller: signatureController,
             hintText: 'Signature (can be initials)',
+            isReadOnly: lease != null,
           ),
           verticalSpace(height: 30),
           Row(

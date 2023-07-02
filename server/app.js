@@ -6,6 +6,11 @@ import { locationRouter } from './routes/location.js';
 import { propertyRouter } from './routes/property.js';
 import { userRouter } from './routes/user.js';
 import { leaseRouter } from './routes/lease.js';
+import { galleryRouter } from './routes/gallery.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const bodyParser  = pkg;
 
 const app = express()
@@ -18,12 +23,14 @@ app.use(bodyParser.urlencoded({
 }));
  
 app.use(cors());
+app.use(express.static(path.join(__dirname, './uploads')));
 
 app.use('/api', authRouter);
 app.use('/api', locationRouter);
 app.use('/api', propertyRouter);
 app.use('/api', userRouter);
 app.use('/api', leaseRouter);
+app.use('/api', galleryRouter);
 
 // app.get('/notes/:id', async (req, res) => {
 //     const id = req.params.id

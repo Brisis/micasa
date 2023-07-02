@@ -13,8 +13,8 @@ class AuthResponse extends Equatable {
   });
 
   AuthResponse.fromJson(Map<String, dynamic> json)
-      : message = json["msg"],
-        authToken = json["token"],
+      : message = json["message"],
+        authToken = json["token"] == null ? null : json["token"] as String,
         user = User.fromJson(json["user"]);
 
   @override

@@ -81,3 +81,34 @@ export async function getProperty(id) {
     return property[0]
 }
 
+
+export async function updateProperty(id, imageId) {
+    const [image] = await poolConnection.query(
+        `
+            SELECT * FROM gallery
+            WHERE id = ?
+        `, 
+        [imageId]
+        );
+
+    if (image.length >= 1) {
+        const coverImage = image[0].image_original;
+
+        console.log(coverImage);
+
+        const [query] = await poolConnection.query(
+            `
+                UPDATE properties
+                SET cover_image = ?
+                WHERE id = ?;
+            `, 
+            [coverImage, id]
+            )
+
+         const property = await getProperty(id);
+
+        return property
+    }
+    
+    return "Image not found"
+}

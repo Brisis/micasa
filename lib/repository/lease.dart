@@ -55,7 +55,7 @@ class LeaseRepository {
     return Lease.fromJson(response);
   }
 
-  Future<String> updateLease({
+  Future<Lease> updateLease({
     required int leaseId,
     required String occupation,
     required int periodEmployedInMonths,
@@ -87,12 +87,12 @@ class LeaseRepository {
 
     String body = json.encode(data);
 
-    final response = await _helper.post(
-      url: "api/register/$leaseId",
+    final response = await _helper.put(
+      url: "api/leases/$leaseId",
       body: body,
     );
 
-    return response.toString();
+    return Lease.fromJson(response);
   }
 
   Future<Lease> getLease({

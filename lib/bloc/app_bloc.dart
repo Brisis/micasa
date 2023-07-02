@@ -6,11 +6,12 @@ import 'package:micasa/models/app_exceptions.dart';
 import 'package:micasa/models/auth_error.dart';
 import 'package:micasa/models/lease.dart';
 import 'package:micasa/models/location.dart';
+import 'package:micasa/models/property.dart';
 import 'package:micasa/models/user.dart';
-import 'package:micasa/network/api_response.dart';
 import 'package:micasa/repository/auth.dart';
 import 'package:micasa/repository/lease.dart';
 import 'package:micasa/repository/location.dart';
+import 'package:micasa/repository/property.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -26,42 +27,56 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     //initialize app
     on<AppEventInitialize>((event, emit) async {
-      //get the current user
-      if (AUTH_TOKEN != null) {
-        final authResponse = await AuthRepository().authenticate(
-          token: AUTH_TOKEN,
-        );
+      emit(const AppStateLoadAppPage(
+        isLoading: false,
+      ));
 
-        if (authResponse.authToken == null) {
-          emit(
-            const AppStateLoggedOut(
-              isLoading: false,
-            ),
+      try {
+        final token = await getAuthToken();
+
+        //get the current user
+        if (token != null) {
+          final authResponse = await AuthRepository().authenticate(
+            token: token,
           );
-        } else {
-          // go grab the user's data
 
           final user = authResponse.user;
 
-          if (user != null) {
-            AUTH_TOKEN = authResponse.authToken;
+          if (user == null) {
+            emit(
+              const AppStateLoggedOut(
+                isLoading: false,
+              ),
+            );
+          } else {
+            // go grab the user's info and data
             final location = await LocationRepository().getLocation(
               locationId: user.locationId,
             );
+
+            final properties = await PropertyRepository().getProperties();
 
             emit(
               AppStateLoggedIn(
                 isLoading: false,
                 user: user,
                 location: location,
+                properties: properties,
               ),
             );
           }
+        } else {
+          emit(
+            const AppStateInitial(
+              isLoading: false,
+            ),
+          );
         }
-      } else {
+      } on Exception catch (e) {
         emit(
-          const AppStateInitial(
+          AppStateLoggedOut(
             isLoading: false,
+            authError: AuthError.from(e),
           ),
         );
       }
@@ -86,23 +101,23 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     on<AppEventGoToAppView>((event, emit) {
       final user = state.user;
-      print(user);
+      final location = state.location;
 
-      if (user != null) {
+      if (user != null && location != null) {
         emit(
           AppStateLoggedIn(
             isLoading: false,
             user: user,
             location: state.location!,
+            tabIndex: event.tabIndex,
           ),
         );
       } else {
-        print(user);
-        // emit(
-        //   const AppStateLoggedOut(
-        //     isLoading: false,
-        //   ),
-        // );
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+          ),
+        );
       }
     });
 
@@ -118,24 +133,30 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     on<AppEventGoToBillingInformationPage>((event, emit) {
       emit(
-        const AppStateIsInBillingInformationPage(
+        AppStateIsInBillingInformationPage(
           isLoading: false,
+          user: state.user!,
+          location: state.location,
         ),
       );
     });
 
     on<AppEventGoToFavouritesPage>((event, emit) {
       emit(
-        const AppStateIsInFavouritesPage(
+        AppStateIsInFavouritesPage(
           isLoading: false,
+          user: state.user!,
+          location: state.location,
         ),
       );
     });
 
     on<AppEventGoToRentalsPage>((event, emit) {
       emit(
-        const AppStateIsInRentalsPage(
+        AppStateIsInRentalsPage(
           isLoading: false,
+          user: state.user!,
+          location: state.location,
         ),
       );
     });
@@ -153,6 +174,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: false,
             lease: lease,
             user: state.user!,
+            location: state.location,
           ),
         );
       } on AppException catch (e) {
@@ -161,6 +183,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             AppStateIsInLeasePage(
               isLoading: false,
               user: state.user!,
+              location: state.location,
             ),
           );
         } else {
@@ -176,16 +199,20 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     on<AppEventGoToPrivacyTermsAndConditionsPage>((event, emit) {
       emit(
-        const AppStateIsInPrivacyTermsAndConditionsPage(
+        AppStateIsInPrivacyTermsAndConditionsPage(
           isLoading: false,
+          user: state.user!,
+          location: state.location,
         ),
       );
     });
 
     on<AppEventGoToContactPage>((event, emit) {
       emit(
-        const AppStateIsInContactPage(
+        AppStateIsInContactPage(
           isLoading: false,
+          user: state.user!,
+          location: state.location,
         ),
       );
     });
@@ -212,16 +239,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         final user = authResponse.user;
 
         if (user != null) {
-          AUTH_TOKEN = authResponse.authToken;
+          saveAuthToken(authResponse.authToken!);
           final location = await LocationRepository().getLocation(
             locationId: user.locationId,
           );
+
+          final properties = await PropertyRepository().getProperties();
 
           emit(
             AppStateLoggedIn(
               isLoading: false,
               user: user,
               location: location,
+              properties: properties,
             ),
           );
         }
@@ -264,16 +294,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           final user = authResponse.user;
 
           if (user != null) {
-            AUTH_TOKEN = authResponse.authToken;
+            saveAuthToken(authResponse.authToken!);
             final location = await LocationRepository().getLocation(
               locationId: user.locationId,
             );
+
+            final properties = await PropertyRepository().getProperties();
 
             emit(
               AppStateLoggedIn(
                 isLoading: false,
                 user: user,
                 location: location,
+                properties: properties,
               ),
             );
           }
@@ -292,6 +325,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     on<AppEventRegisterLease>((event, emit) async {
       final user = state.user!;
+      final lease = state.lease;
       // start loading
       emit(
         AppStateIsInLeasePage(
@@ -318,32 +352,56 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final signature = event.signature;
 
       try {
-        final response = await LeaseRepository().registerLease(
-          userId: userId,
-          nationalId: nationalId,
-          dateOfBirth: dateOfBirth,
-          occupation: occupation,
-          periodEmployedInMonths: periodEmployedInMonths,
-          employerName: employerName,
-          salary: salary,
-          businessAddress: businessAddress,
-          phoneNumber: phoneNumber,
-          currentHomeAddress: currentHomeAddress,
-          homePhoneNumber: homePhoneNumber,
-          familySize: familySize,
-          nextOfKin: nextOfKin,
-          nextOfKinPhoneNumber: nextOfKinPhoneNumber,
-          nextOfKinAddress: nextOfKinAddress,
-          signature: signature,
-        );
-
-        emit(
-          AppStateIsInLeasePage(
-            isLoading: false,
-            lease: response,
-            user: user,
-          ),
-        );
+        if (lease != null) {
+          final response = await LeaseRepository().updateLease(
+            leaseId: lease.id,
+            occupation: occupation,
+            periodEmployedInMonths: periodEmployedInMonths,
+            employerName: employerName,
+            salary: salary,
+            businessAddress: businessAddress,
+            phoneNumber: phoneNumber,
+            currentHomeAddress: currentHomeAddress,
+            homePhoneNumber: homePhoneNumber,
+            familySize: familySize,
+            nextOfKin: nextOfKin,
+            nextOfKinPhoneNumber: nextOfKinPhoneNumber,
+            nextOfKinAddress: nextOfKinAddress,
+          );
+          emit(
+            AppStateIsInLeasePage(
+              isLoading: false,
+              lease: response,
+              user: user,
+            ),
+          );
+        } else {
+          final response = await LeaseRepository().registerLease(
+            userId: userId,
+            nationalId: nationalId,
+            dateOfBirth: dateOfBirth,
+            occupation: occupation,
+            periodEmployedInMonths: periodEmployedInMonths,
+            employerName: employerName,
+            salary: salary,
+            businessAddress: businessAddress,
+            phoneNumber: phoneNumber,
+            currentHomeAddress: currentHomeAddress,
+            homePhoneNumber: homePhoneNumber,
+            familySize: familySize,
+            nextOfKin: nextOfKin,
+            nextOfKinPhoneNumber: nextOfKinPhoneNumber,
+            nextOfKinAddress: nextOfKinAddress,
+            signature: signature,
+          );
+          emit(
+            AppStateIsInLeasePage(
+              isLoading: false,
+              lease: response,
+              user: user,
+            ),
+          );
+        }
       } on Exception catch (e) {
         emit(
           AppStateIsInLeasePage(

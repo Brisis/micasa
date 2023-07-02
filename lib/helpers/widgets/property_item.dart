@@ -1,22 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:micasa/global/server_url.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/pages/property/property_page.dart';
 
 class PropertyItem extends StatelessWidget {
   final String name;
-  final String imageUrl;
+  final String? imageUrl;
   final int price;
   final double rating;
-  final int reviewCount;
+  final int? reviewCount;
   final bool hasFavourited;
   const PropertyItem({
     super.key,
     required this.name,
-    required this.imageUrl,
+    this.imageUrl,
     required this.price,
     required this.rating,
-    required this.reviewCount,
+    this.reviewCount,
     this.hasFavourited = false,
   });
 
@@ -47,12 +48,16 @@ class PropertyItem extends StatelessWidget {
                         topRight: Radius.circular(8),
                         topLeft: Radius.circular(8),
                       ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          imageUrl,
-                        ),
-                        fit: BoxFit.cover,
-                      ),
+                      image: imageUrl != null
+                          ? DecorationImage(
+                              image: NetworkImage(
+                                  "${LOCAL_SERVER_URL}thumbnails/${imageUrl!}"),
+                              fit: BoxFit.cover,
+                            )
+                          : const DecorationImage(
+                              image: AssetImage("assets/images/h2.jpg"),
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
                 ),

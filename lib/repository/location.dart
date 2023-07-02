@@ -23,6 +23,8 @@ class LocationRepository {
       url: "api/locations",
     );
 
-    return [Location.fromJson(response)];
+    return (response as List<dynamic>)
+        .map((i) => Location.fromJson(i))
+        .toList();
   }
 }

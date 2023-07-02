@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 import 'package:micasa/helpers/widgets/property_item.dart';
 import 'package:micasa/helpers/widgets/property_item_sm.dart';
+import 'package:micasa/models/property.dart';
 import 'package:micasa/pages/property/properties_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +12,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final properties = context.watch<AppBloc>().state.properties!;
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: ListView(
@@ -17,9 +21,13 @@ class HomePage extends StatelessWidget {
           verticalSpace(height: 15),
           const CategorySection(),
           verticalSpace(),
-          const NearbySection(),
+          NearbySection(
+            properties: properties,
+          ),
           verticalSpace(),
-          const RecommendedSection(),
+          RecommendedSection(
+            properties: properties,
+          ),
         ],
       ),
     );
@@ -293,7 +301,11 @@ class CategoryItem extends StatelessWidget {
 }
 
 class NearbySection extends StatelessWidget {
-  const NearbySection({super.key});
+  final List<Property> properties;
+  const NearbySection({
+    super.key,
+    required this.properties,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -335,7 +347,9 @@ class NearbySection extends StatelessWidget {
             ],
           ),
           verticalSpace(),
-          const NearbyItems(),
+          NearbyItems(
+            properties: properties,
+          ),
           verticalSpace(height: 15),
         ],
       ),
@@ -344,7 +358,11 @@ class NearbySection extends StatelessWidget {
 }
 
 class NearbyItems extends StatelessWidget {
-  const NearbyItems({super.key});
+  final List<Property> properties;
+  const NearbyItems({
+    super.key,
+    required this.properties,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -354,19 +372,18 @@ class NearbyItems extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: PropertySmallItem(
-                name: "Chitumba House",
-                location: "Meyrick",
-                imageUrl: "assets/images/h1.jpg",
+                name: properties[0].name,
+                price: properties[0].price,
+                imageUrl: properties[0].coverImage,
               ),
             ),
             horizontalSpace(width: 15),
             const Expanded(
               child: PropertySmallItem(
                 name: "Zindoga Room",
-                location: "Waterfalls",
-                imageUrl: "assets/images/h2.jpg",
+                price: 110,
               ),
             ),
           ],
@@ -377,16 +394,14 @@ class NearbyItems extends StatelessWidget {
             const Expanded(
               child: PropertySmallItem(
                 name: "Ruva House",
-                location: "Belgravia",
-                imageUrl: "assets/images/h2.jpg",
+                price: 50,
               ),
             ),
             horizontalSpace(width: 15),
             const Expanded(
               child: PropertySmallItem(
                 name: "Chanda Cottage",
-                location: "Glenview",
-                imageUrl: "assets/images/h1.jpg",
+                price: 30,
               ),
             ),
           ],
@@ -397,7 +412,11 @@ class NearbyItems extends StatelessWidget {
 }
 
 class RecommendedSection extends StatelessWidget {
-  const RecommendedSection({super.key});
+  final List<Property> properties;
+  const RecommendedSection({
+    super.key,
+    required this.properties,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -415,17 +434,22 @@ class RecommendedSection extends StatelessWidget {
             ),
           ),
           verticalSpace(),
-          const PropertyItem(
-            name: "Emerald House",
-            imageUrl: "assets/images/h2.jpg",
-            price: 150,
-            rating: 4.3,
-            reviewCount: 3,
+          Column(
+            children: properties
+                .map(
+                  (property) => PropertyItem(
+                    name: property.name,
+                    imageUrl: property.coverImage, //"assets/images/h2.jpg",
+                    price: property.price,
+                    rating: property.averageRating,
+                    reviewCount: 0,
+                  ),
+                )
+                .toList(),
           ),
           verticalSpace(height: 15),
           const PropertyItem(
             name: "Mainway Meadows Clusters",
-            imageUrl: "assets/images/h1.jpg",
             price: 1250,
             rating: 5.0,
             reviewCount: 10,

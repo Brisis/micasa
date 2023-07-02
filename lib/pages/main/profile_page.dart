@@ -3,12 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
-import 'package:micasa/pages/extras/contact_page.dart';
-import 'package:micasa/pages/extras/tcs_page.dart';
-import 'package:micasa/pages/profile/billing_information_page.dart';
-import 'package:micasa/pages/profile/edit_profile_page.dart';
-import 'package:micasa/pages/profile/favourites_page.dart';
-import 'package:micasa/pages/profile/rentals_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

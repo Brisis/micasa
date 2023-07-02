@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:micasa/bloc/app_bloc.dart';
 import 'package:micasa/helpers/constants.dart';
 
 class PrivacyTermsAndConditionsPage extends StatelessWidget {
@@ -38,7 +40,11 @@ class TcsTopSection extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    context.read<AppBloc>().add(
+                          const AppEventGoToAppView(
+                            tabIndex: 4,
+                          ),
+                        );
                   },
                   child: Container(
                     height: 50,
